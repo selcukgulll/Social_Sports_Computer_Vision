@@ -1,0 +1,21 @@
+{
+  "video": "D:\\Dev\\GitHub\\sosyaltactics\\Video_Project2.mp4",
+  "fps": 30.0,
+  "duration_sec": 240.66666666666666,
+  "sample_sec": 0.1,
+  "processed_samples": 2407,
+  "rows": 29264,
+  "unique_stable_ids": 81,
+  "created_files": {
+    "csv": "D:\\Dev\\GitHub\\sosyaltactics\\tracks.csv",
+    "xlsx": "D:\\Dev\\GitHub\\sosyaltactics\\tracks.xlsx",
+    "html_viewer": "D:\\Dev\\GitHub\\sosyaltactics\\viewer.html",
+    "calibration": "D:\\Dev\\GitHub\\sosyaltactics\\calibration.json"
+  },
+  "elapsed_sec": 1154.66,
+  "notes": [
+    "field_x/field_y değerleri 0-100 ve 0-60 normalize saha koordinatıdır.",
+    "Pozisyon noktası bbox alt-orta, yani oyuncunun ayak noktasıdır.",
+    "Takım rengi basit HSV turuncu-yoksa-koyu sınıflandırmasıdır; gerekirse classify_team_by_color fonksiyonunu forma rengine göre değiştir."
+  ]
+}

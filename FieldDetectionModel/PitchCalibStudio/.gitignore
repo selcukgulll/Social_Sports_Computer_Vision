@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+models/*.pt
+!models/.gitkeep
+
+data/raw/images/
+data/raw/videos/
+data/merged/*/
+
+outputs/audits/audit_*/
+outputs/previews/audit_*/
+outputs/previews/manual_*/
+outputs/training_runs/*/
+outputs/predictions/*/
+outputs/calibrations/*/

@@ -1,0 +1,330 @@
+{
+  "mode": "curve_aware_drag_lines_v6",
+  "mapping_type": "poly2",
+  "calibration_time_sec": 5.0,
+  "pitch_length": 100.0,
+  "pitch_width": 60.0,
+  "penalty_depth": 16.0,
+  "penalty_width": 36.0,
+  "goalbox_depth": 6.0,
+  "goalbox_width": 18.0,
+  "image_to_field_H": [
+    [
+      0.3996970965294787,
+      1.437442862456264,
+      -224.33275114743412
+    ],
+    [
+      -0.1999412964020629,
+      0.9219515395328273,
+      48.74124341484914
+    ],
+    [
+      0.0016331824516738543,
+      0.013073391806804413,
+      1.0
+    ]
+  ],
+  "image_to_field_poly": {
+    "type": "poly2",
+    "degree": 2,
+    "image_w": 1280,
+    "image_h": 720,
+    "coef_x": [
+      85.90771432828541,
+      32.16233508602056,
+      35.73881223980267,
+      -23.60443060542095,
+      -14.336662150982015,
+      -27.133172689334938
+    ],
+    "coef_y": [
+      38.522554102926684,
+      -25.31591270791563,
+      30.81485918610824,
+      16.061692094856664,
+      5.313073622633094,
+      -18.84909933729426
+    ],
+    "fit_rmse": 9.678954609782748,
+    "fit_max_err": 29.012502945814614,
+    "num_points": 81
+  },
+  "ui_items": {
+    "sol_tac": {
+      "label": "Sol Kale Çizgisi / Sol Kısa Kenar",
+      "type": "curve",
+      "color": [
+        0,
+        255,
+        255
+      ],
+      "p1": [
+        421.0,
+        39.0
+      ],
+      "pm": [
+        221.0,
+        72.0
+      ],
+      "p2": [
+        29.0,
+        148.0
+      ]
+    },
+    "sag_tac": {
+      "label": "Sağ Kale Çizgisi / Sağ Kısa Kenar",
+      "type": "curve",
+      "color": [
+        0,
+        200,
+        255
+      ],
+      "p1": [
+        1251.0,
+        220.0
+      ],
+      "pm": [
+        1110.0,
+        568.0
+      ],
+      "p2": [
+        978.0,
+        716.0
+      ]
+    },
+    "yukari_korner": {
+      "label": "Üst Taç Çizgisi / Üst Uzun Kenar",
+      "type": "curve",
+      "color": [
+        255,
+        200,
+        0
+      ],
+      "p1": [
+        419.0,
+        38.0
+      ],
+      "pm": [
+        696.0,
+        42.0
+      ],
+      "p2": [
+        1249.0,
+        218.0
+      ]
+    },
+    "asagi_korner": {
+      "label": "Alt Taç Çizgisi / Alt Uzun Kenar",
+      "type": "curve",
+      "color": [
+        255,
+        160,
+        0
+      ],
+      "p1": [
+        31.0,
+        149.0
+      ],
+      "pm": [
+        100.0,
+        448.0
+      ],
+      "p2": [
+        290.0,
+        710.0
+      ]
+    },
+    "orta_cizgi": {
+      "label": "Orta Çizgi",
+      "type": "line",
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "p1": [
+        662.0,
+        61.0
+      ],
+      "p2": [
+        54.0,
+        234.0
+      ]
+    },
+    "sol_ceza": {
+      "label": "Sol Ceza Sahası Ön Çizgisi",
+      "type": "line",
+      "color": [
+        180,
+        255,
+        180
+      ],
+      "p1": [
+        382.0,
+        62.0
+      ],
+      "p2": [
+        134.0,
+        130.0
+      ]
+    },
+    "sag_ceza": {
+      "label": "Sağ Ceza Sahası Ön Çizgisi",
+      "type": "line",
+      "color": [
+        140,
+        255,
+        140
+      ],
+      "p1": [
+        991.0,
+        178.0
+      ],
+      "p2": [
+        555.0,
+        370.0
+      ]
+    },
+    "yukari_kale": {
+      "label": "Yukarı Kale",
+      "type": "line",
+      "color": [
+        0,
+        255,
+        0
+      ],
+      "p1": [
+        184.0,
+        91.0
+      ],
+      "p2": [
+        251.0,
+        75.0
+      ]
+    },
+    "asagi_kale": {
+      "label": "Aşağı Kale",
+      "type": "line",
+      "color": [
+        0,
+        220,
+        0
+      ],
+      "p1": [
+        1162.0,
+        424.0
+      ],
+      "p2": [
+        1210.0,
+        317.0
+      ]
+    },
+    "top": {
+      "label": "Top",
+      "type": "point",
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "p": [
+        974.0,
+        371.0
+      ]
+    }
+  },
+  "goal_guides": {
+    "yukari_kale": {
+      "p1": [
+        184.0,
+        91.0
+      ],
+      "p2": [
+        251.0,
+        75.0
+      ]
+    },
+    "asagi_kale": {
+      "p1": [
+        1162.0,
+        424.0
+      ],
+      "p2": [
+        1210.0,
+        317.0
+      ]
+    }
+  },
+  "inferred_roles": {
+    "left_short_edge": "sol_tac",
+    "right_short_edge": "sag_tac",
+    "top_long_edge": "yukari_korner",
+    "bottom_long_edge": "asagi_korner"
+  },
+  "ball_marker": [
+    974.0,
+    371.0
+  ],
+  "intersection_points_used": [
+    {
+      "image_point": [
+        422.14413463329817,
+        38.68186052288394
+      ],
+      "field_point": [
+        0.0,
+        0.0
+      ],
+      "from_lines": [
+        "sol_tac+yukari_korner"
+      ]
+    },
+    {
+      "image_point": [
+        1251.7701488650666,
+        218.6007551755566
+      ],
+      "field_point": [
+        100.0,
+        0.0
+      ],
+      "from_lines": [
+        "sag_tac+yukari_korner"
+      ]
+    },
+    {
+      "image_point": [
+        605.3484129154135,
+        1393.0519677434245
+      ],
+      "field_point": [
+        100.0,
+        60.0
+      ],
+      "from_lines": [
+        "sag_tac+asagi_korner"
+      ]
+    },
+    {
+      "image_point": [
+        30.36331067166916,
+        147.62091616527567
+      ],
+      "field_point": [
+        0.0,
+        60.0
+      ],
+      "from_lines": [
+        "sol_tac+asagi_korner"
+      ]
+    }
+  ],
+  "lens_correction": {
+    "undistort_k1": 0.0,
+    "undistort_k2": 0.0,
+    "undistort_k3": 0.0,
+    "undistort_focal": 0.0
+  },
+  "created_at_unix": 1782933590.6108778
+}

@@ -1,0 +1,26 @@
+project_name: PitchCalibStudio
+datasets_root: ../datasets
+outputs_root: outputs
+models_root: models
+
+calibration:
+  min_keypoints: 4
+  keypoint_confidence: 0.25
+  ransac_reprojection_threshold_px: 8.0
+  max_mean_reprojection_error_px: 15.0
+  min_confidence_score: 0.35
+  min_projected_pitch_area_ratio: 0.005
+  max_projected_pitch_area_ratio: 12.0
+
+video:
+  seconds: 5.0
+  sample_fps: 5.0
+
+training:
+  model: yolo26m-pose.pt
+  epochs: 150
+  imgsz: 960
+  batch: 8
+  patience: 30
+  workers: 4
+  seed: 42

@@ -1,0 +1,81 @@
+# Bu dosya bilinçli olarak tamamlanmamıştır. Önce Dataset Audit ve
+# Keypoint Preview ekranlarında indekslerin anlamını görsel olarak doğrulayın.
+#
+# Ortak hedef, Rocktail veri setinin 0..21 düzenidir (toplam 22 nokta).
+# source_to_target: kaynak_indeks: hedef_indeks
+# Kullanılmayacak kaynak noktalar null olabilir. Her hedef indeks en fazla bir
+# kez kullanılmalı ve hedef indeks pitch_schema.yaml içinde bulunmalıdır.
+target_schema: pitch_schema.yaml
+target_class: pitch
+class_map:
+  cancha: pitch
+  grass: pitch
+  pitch: pitch
+
+datasets:
+  Cancha_F5.v1i.yolov8:
+    source_kpt_shape: [14, 3]
+    confirmed_order: true
+    source_to_target:
+      0: 0
+      1: 1
+      2: 2
+      3: 3
+      4: 4
+      5: 5
+      6: null
+      7: 8
+      8: null
+      9: 13
+      10: null
+      11: null
+      12: null
+      13: null
+
+  futsal-pitch-detection.v9i.yolov8:
+    source_kpt_shape: [16, 3]
+    confirmed_order: true
+    source_to_target:
+      0: 0
+      1: 1
+      2: 2
+      3: 3
+      4: 4
+      5: 5
+      6: 8
+      7: 9
+      8: 12
+      9: 13
+      10: 14
+      11: 15
+      12: 16
+      13: 17
+      14: 18
+      15: 19
+
+  keypoints.v1i.yolov8:
+    source_kpt_shape: [22, 3]
+    confirmed_order: true
+    source_to_target:
+      0: 0
+      1: 1
+      2: 2
+      3: 3
+      4: 4
+      5: 5
+      6: 6
+      7: 7
+      8: 8
+      9: 9
+      10: 10
+      11: 11
+      12: 12
+      13: 13
+      14: 14
+      15: 15
+      16: 16
+      17: 17
+      18: 18
+      19: 19
+      20: 20
+      21: 21

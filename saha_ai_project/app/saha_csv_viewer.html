@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Saha Tek CSV Viewer</title>
+<style>
+  :root { --bg:#111; --panel:#1d1d1d; --text:#eee; --muted:#aaa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:12px 16px; background:#171717; border-bottom:1px solid #333; }
+  h1 { margin:0; font-size:18px; font-weight:700; }
+  .sub { color:var(--muted); margin-top:5px; font-size:13px; }
+  .layout { display:grid; grid-template-columns: minmax(520px, 1fr) 340px; gap:12px; padding:12px; }
+  .canvas-wrap { background:#0b0b0b; border:1px solid #333; border-radius:10px; padding:10px; }
+  canvas { width:100%; height:auto; display:block; border-radius:8px; background:#176b2c; }
+  .panel { background:var(--panel); border:1px solid #333; border-radius:10px; padding:12px; }
+  .panel h2 { margin:0 0 10px; font-size:15px; }
+  label { display:block; margin:10px 0 5px; color:#ddd; font-size:13px; }
+  input[type="file"], select, button { width:100%; padding:8px; border-radius:7px; border:1px solid #444; background:#111; color:#eee; }
+  button { cursor:pointer; background:#2b2b2b; }
+  button:hover { background:#383838; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px; }
+  .check { display:flex; align-items:center; gap:8px; margin:9px 0; font-size:13px; color:#ddd; }
+  .check input { width:auto; }
+  #timeSlider { width:100%; }
+  .stat { padding:8px; background:#111; border:1px solid #333; border-radius:7px; color:#ccc; font-size:13px; line-height:1.45; }
+  .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; font-size:12px; color:#ddd; }
+  .pill { display:inline-flex; align-items:center; gap:5px; border:1px solid #444; border-radius:999px; padding:4px 8px; }
+  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid white; }
+  .small { color:var(--muted); font-size:12px; line-height:1.35; }
+  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Saha Tek CSV Viewer</h1>
+  <div class="sub">Önerilen dosya: <b>tracking_viewer.csv</b>. Oyuncu + top, raw + interpolated aynı anda bulunur.</div>
+</header>
+<div class="layout">
+  <div class="canvas-wrap">
+    <canvas id="pitch" width="1200" height="720"></canvas>
+  </div>
+  <div class="panel">
+    <h2>Dosya</h2>
+    <label>Viewer CSV</label>
+    <input id="csvFile" type="file" accept=".csv" />
+
+    <h2 style="margin-top:16px;">Kontrol</h2>
+    <button id="playBtn">Play</button>
+    <input id="timeSlider" type="range" min="0" max="0" step="0.001" value="0" />
+    <div class="row">
+      <select id="speedSel">
+        <option value="0.25">0.25x</option>
+        <option value="0.5">0.5x</option>
+        <option value="1" selected>1x</option>
+        <option value="2">2x</option>
+        <option value="4">4x</option>
+      </select>
+      <select id="followSel">
+        <option value="all" selected>Tüm saha</option>
+        <option value="right">Sağ yarı</option>
+        <option value="left">Sol yarı</option>
+      </select>
+    </div>
+
+    <label class="check"><input id="interpChk" type="checkbox" checked /> Interpolated veriyi kullan</label>
+    <label class="check"><input id="smoothChk" type="checkbox" checked /> Viewer içinde akıcı kaydır</label>
+    <label class="check"><input id="idsChk" type="checkbox" checked /> ID numaralarını göster</label>
+    <label class="check"><input id="trailChk" type="checkbox" checked /> Son 2 saniye iz göster</label>
+    <label class="check"><input id="ballChk" type="checkbox" checked /> Topu göster</label>
+    <label class="check"><input id="confChk" type="checkbox" checked /> Confidence düşükse soluklaştır</label>
+
+    <div class="stat" id="stats">CSV bekleniyor.</div>
+    <div class="legend">
+      <span class="pill"><span class="dot" style="background:#ff8c00"></span>orange</span>
+      <span class="pill"><span class="dot" style="background:#142633"></span>dark</span>
+      <span class="pill"><span class="dot" style="background:#eee"></span>ball</span>
+      <span class="pill"><span class="dot" style="background:#888"></span>unknown</span>
+    </div>
+    <p class="small">
+      <b>Interpolated veriyi kullan</b> kapalıyken yalnızca raw detection/tracking satırları oynatılır.
+      <b>Viewer içinde akıcı kaydır</b> ise seçili verinin iki zamanı arasında görsel olarak ara konum üretir; CSV'yi değiştirmez.
+    </p>
+  </div>
+</div>
+
+<script>
+const PITCH_L = 100.0;
+const PITCH_W = 60.0;
+const PEN_D = 16.0;
+const PEN_W = 36.0;
+const BOX_D = 6.0;
+const BOX_W = 18.0;
+
+const canvas = document.getElementById('pitch');
+const ctx = canvas.getContext('2d');
+const csvFile = document.getElementById('csvFile');
+const playBtn = document.getElementById('playBtn');
+const slider = document.getElementById('timeSlider');
+const speedSel = document.getElementById('speedSel');
+const followSel = document.getElementById('followSel');
+const interpChk = document.getElementById('interpChk');
+const smoothChk = document.getElementById('smoothChk');
+const idsChk = document.getElementById('idsChk');
+const trailChk = document.getElementById('trailChk');
+const ballChk = document.getElementById('ballChk');
+const confChk = document.getElementById('confChk');
+const stats = document.getElementById('stats');
+
+let allRows = [];
+let activeRows = [];
+let playerRows = [];
+let ballRows = [];
+let playerTracks = new Map();
+let ballTracks = new Map();
+let minT = 0, maxT = 0, currentT = 0;
+let playing = false;
+let lastRAF = null;
+
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, '');
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const n = text[i+1];
+    if (inQuotes) {
+      if (c === '"' && n === '"') { field += '"'; i++; }
+      else if (c === '"') { inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c === '\r') { }
+      else { field += c; }
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  const header = rows[0].map(h => h.trim());
+  return rows.slice(1).filter(r => r.length && r.some(v => v !== '')).map(r => {
+    const obj = {};
+    header.forEach((h, i) => {
+      const v = r[i] ?? '';
+      const num = Number(v);
+      obj[h] = (v !== '' && !Number.isNaN(num)) ? num : v;
+    });
+    return normalizeRow(obj);
+  });
+}
+
+function truthy(v) {
+  if (typeof v === 'boolean') return v;
+  const s = String(v || '').toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes';
+}
+
+function normalizeRow(r) {
+  if (!('variant' in r) || r.variant === '') {
+    // Eski tek CSV / eski ayrı dosya desteği.
+    r.variant = truthy(r.is_interpolated) || String(r.source || '').toLowerCase().includes('interpolated') ? 'interpolated' : 'raw';
+  }
+  if (!('entity' in r) || r.entity === '') {
+    const cls = String(r.class_name || '').toLowerCase();
+    const team = String(r.team || '').toLowerCase();
+    r.entity = (team === 'ball' || cls.includes('ball')) ? 'ball' : 'player';
+  }
+  if (!('viewer_id' in r) || r.viewer_id === '') {
+    const sid = ('stable_id' in r && r.stable_id !== '') ? r.stable_id : 'unknown';
+    r.viewer_id = String(r.entity) + '_' + String(sid);
+  }
+  r.variant = String(r.variant).toLowerCase();
+  r.entity = String(r.entity).toLowerCase();
+  r.time_sec = Number(r.time_sec);
+  r.field_x = Number(r.field_x);
+  r.field_y = Number(r.field_y);
+  r.position_conf = Number(r.position_conf || r.det_conf || 0.75);
+  return r;
+}
+
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result));
+    fr.onerror = reject;
+    fr.readAsText(file, 'utf-8');
+  });
+}
+
+function groupRows(rows) {
+  const map = new Map();
+  for (const r of rows) {
+    if (!Number.isFinite(r.time_sec) || !Number.isFinite(r.field_x) || !Number.isFinite(r.field_y)) continue;
+    const id = String(r.viewer_id);
+    if (!map.has(id)) map.set(id, []);
+    map.get(id).push(r);
+  }
+  for (const arr of map.values()) arr.sort((a,b) => a.time_sec - b.time_sec);
+  return map;
+}
+
+function chooseActiveRows() {
+  if (!allRows.length) {
+    activeRows = []; playerRows = []; ballRows = [];
+    playerTracks = new Map(); ballTracks = new Map();
+    updateTimeline(true); return;
+  }
+  const hasInterp = allRows.some(r => r.variant === 'interpolated');
+  const targetVariant = (interpChk.checked && hasInterp) ? 'interpolated' : 'raw';
+  activeRows = allRows.filter(r => r.variant === targetVariant);
+  // Eski dosyada sadece interpolated varsa ve switch kapatılırsa boş kalmasın.
+  if (!activeRows.length) activeRows = allRows.slice();
+  playerRows = activeRows.filter(r => r.entity !== 'ball');
+  ballRows = activeRows.filter(r => r.entity === 'ball');
+  playerTracks = groupRows(playerRows);
+  ballTracks = groupRows(ballRows);
+  updateTimeline(false);
+  updateStats();
+  render();
+}
+
+function updateTimeline(resetTime) {
+  const rows = activeRows.filter(r => Number.isFinite(r.time_sec));
+  if (!rows.length) {
+    minT = maxT = currentT = 0;
+    slider.min = 0; slider.max = 0; slider.value = 0;
+    return;
+  }
+  minT = Math.min(...rows.map(r => r.time_sec));
+  maxT = Math.max(...rows.map(r => r.time_sec));
+  if (resetTime || currentT < minT || currentT > maxT) currentT = minT;
+  slider.min = minT;
+  slider.max = maxT;
+  slider.step = 0.001;
+  slider.value = currentT;
+}
+
+csvFile.addEventListener('change', async () => {
+  if (!csvFile.files.length) return;
+  const file = csvFile.files[0];
+  if (file.size > 50 * 1024 * 1024) {
+    allRows = [];
+    stats.innerHTML = `
+      <b>Dosya viewer için çok büyük (${(file.size / 1024 / 1024).toFixed(1)} MB).</b><br>
+      Aynı klasördeki <b>tracking_viewer.csv</b> dosyasını seçin.
+    `;
+    csvFile.value = '';
+    return;
+  }
+  const text = await readFile(file);
+  allRows = parseCSV(text);
+  currentT = 0;
+  chooseActiveRows();
+});
+
+function updateStats() {
+  const rawN = allRows.filter(r => r.variant === 'raw').length;
+  const interpN = allRows.filter(r => r.variant === 'interpolated').length;
+  const activeVariant = activeRows.length ? String(activeRows[0].variant || '-') : '-';
+  stats.innerHTML = `
+    Aktif veri: <b>${activeVariant}</b><br>
+    Süre: <b>${minT.toFixed(2)} - ${maxT.toFixed(2)} s</b><br>
+    Oyuncu stable_id: <b>${playerTracks.size}</b><br>
+    Oyuncu satırı: <b>${playerRows.length}</b><br>
+    Top satırı: <b>${ballRows.length}</b><br>
+    CSV toplam: <b>${allRows.length}</b> / raw: <b>${rawN}</b> / interp: <b>${interpN}</b><br>
+    Anlık zaman: <b>${currentT.toFixed(2)} s</b>
+  `;
+}
+
+function viewBounds() {
+  const f = followSel.value;
+  if (f === 'left') return {x0:0, x1:PITCH_L/2, y0:0, y1:PITCH_W};
+  if (f === 'right') return {x0:PITCH_L/2, x1:PITCH_L, y0:0, y1:PITCH_W};
+  return {x0:0, x1:PITCH_L, y0:0, y1:PITCH_W};
+}
+
+function pitchX(x) {
+  const b = viewBounds();
+  return 55 + ((x - b.x0) / (b.x1 - b.x0)) * (canvas.width - 110);
+}
+function pitchY(y) {
+  const b = viewBounds();
+  return 55 + ((y - b.y0) / (b.y1 - b.y0)) * (canvas.height - 110);
+}
+function drawLine(x1,y1,x2,y2) { ctx.beginPath(); ctx.moveTo(pitchX(x1), pitchY(y1)); ctx.lineTo(pitchX(x2), pitchY(y2)); ctx.stroke(); }
+function drawRect(x,y,w,h) { ctx.strokeRect(pitchX(x), pitchY(y), (w/(viewBounds().x1-viewBounds().x0))*(canvas.width-110), (h/(viewBounds().y1-viewBounds().y0))*(canvas.height-110)); }
+
+function drawPitch() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const g = ctx.createLinearGradient(0,0,canvas.width,0);
+  g.addColorStop(0, '#145a29');
+  g.addColorStop(0.5, '#1b7431');
+  g.addColorStop(1, '#145a29');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const b = viewBounds();
+  for (let i=0;i<10;i++) {
+    ctx.fillStyle = i%2 ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.035)';
+    const x0 = b.x0 + i*(b.x1-b.x0)/10;
+    const x1 = b.x0 + (i+1)*(b.x1-b.x0)/10;
+    ctx.fillRect(pitchX(x0), pitchY(b.y0), pitchX(x1)-pitchX(x0), pitchY(b.y1)-pitchY(b.y0));
+  }
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  ctx.lineWidth = 3;
+  drawRect(0,0,PITCH_L,PITCH_W);
+  drawLine(PITCH_L/2,0,PITCH_L/2,PITCH_W);
+  ctx.beginPath();
+  ctx.arc(pitchX(PITCH_L/2), pitchY(PITCH_W/2), (10/(b.x1-b.x0))*(canvas.width-110), 0, Math.PI*2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(pitchX(PITCH_L/2), pitchY(PITCH_W/2), 4, 0, Math.PI*2);
+  ctx.fillStyle = '#fff'; ctx.fill();
+
+  const penY = (PITCH_W-PEN_W)/2;
+  const boxY = (PITCH_W-BOX_W)/2;
+  drawRect(0, penY, PEN_D, PEN_W);
+  drawRect(PITCH_L-PEN_D, penY, PEN_D, PEN_W);
+  drawRect(0, boxY, BOX_D, BOX_W);
+  drawRect(PITCH_L-BOX_D, boxY, BOX_D, BOX_W);
+
+  ctx.strokeStyle = 'rgba(255,235,80,0.95)';
+  ctx.lineWidth = 4;
+  drawLine(0, 0, 0, PITCH_W);
+  drawLine(PITCH_L, 0, PITCH_L, PITCH_W);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 2;
+  ctx.strokeRect(pitchX(0)-28, pitchY(PITCH_W/2-7), 28, pitchY(14)-pitchY(0));
+  ctx.strokeRect(pitchX(PITCH_L), pitchY(PITCH_W/2-7), 28, pitchY(14)-pitchY(0));
+}
+
+function binaryPosition(arr, t) {
+  let lo=0, hi=arr.length-1;
+  while (lo <= hi) {
+    const mid = (lo+hi)>>1;
+    if (arr[mid].time_sec < t) lo = mid+1; else hi = mid-1;
+  }
+  return lo;
+}
+
+function rowAtTime(arr, t, smooth=true, rawWindow=0.075) {
+  if (!arr.length) return null;
+  const pos = binaryPosition(arr, t);
+  const prev = arr[Math.max(0, pos-1)];
+  const next = arr[Math.min(arr.length-1, pos)];
+  if (!smooth) {
+    let best = prev;
+    if (next && Math.abs(next.time_sec - t) < Math.abs(prev.time_sec - t)) best = next;
+    if (Math.abs(best.time_sec - t) <= rawWindow) return best;
+    return null;
+  }
+  if (!prev) return next;
+  if (!next) return prev;
+  if (prev === next) return prev;
+  const gap = next.time_sec - prev.time_sec;
+  if (gap <= 0 || gap > 0.65) {
+    const best = Math.abs(prev.time_sec - t) < Math.abs(next.time_sec - t) ? prev : next;
+    return Math.abs(best.time_sec - t) < 0.25 ? best : null;
+  }
+  const a = Math.max(0, Math.min(1, (t - prev.time_sec) / gap));
+  const out = {...prev};
+  out.field_x = prev.field_x + a * (next.field_x - prev.field_x);
+  out.field_y = prev.field_y + a * (next.field_y - prev.field_y);
+  out.position_conf = Math.min(Number(prev.position_conf || prev.det_conf || 0.7), Number(next.position_conf || next.det_conf || 0.7));
+  out.source = (prev.source === 'interpolated' || next.source === 'interpolated') ? 'interpolated' : 'viewer_smooth';
+  return out;
+}
+
+function colorForTeam(team) {
+  const t = String(team || 'unknown').toLowerCase();
+  if (t.includes('orange')) return '#ff8c00';
+  if (t.includes('dark')) return '#142633';
+  if (t.includes('ball')) return '#f2f2f2';
+  return '#888';
+}
+
+function drawTrail(arr, t, color) {
+  if (!trailChk.checked) return;
+  const pts = arr.filter(r => r.time_sec >= t - 2.0 && r.time_sec <= t && Number.isFinite(r.field_x) && Number.isFinite(r.field_y));
+  if (pts.length < 2) return;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.25;
+  ctx.beginPath();
+  ctx.moveTo(pitchX(pts[0].field_x), pitchY(pts[0].field_y));
+  for (let i=1;i<pts.length;i++) ctx.lineTo(pitchX(pts[i].field_x), pitchY(pts[i].field_y));
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMarker(r, id, isBall=false) {
+  const x = Number(r.field_x), y = Number(r.field_y);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+  const px = pitchX(x), py = pitchY(y);
+  const conf = Number(r.position_conf || r.det_conf || 0.75);
+  const alpha = confChk.checked ? Math.max(0.22, Math.min(1, conf)) : 1;
+  const color = isBall ? '#eeeeee' : colorForTeam(r.team || r.team_hint);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.shadowColor = 'rgba(0,0,0,0.55)';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.arc(px, py, isBall ? 7 : 15, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = isBall ? 2 : 3;
+  ctx.strokeStyle = isBall ? '#111' : '#f7f7f7';
+  ctx.stroke();
+  if (!isBall && idsChk.checked) {
+    const label = String(r.stable_id ?? id).replace(/^player_/, '');
+    ctx.fillStyle = (String(r.team || '').includes('orange')) ? '#111' : '#fff';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, px, py+0.5);
+  }
+  if (r.source === 'interpolated' || truthy(r.is_interpolated)) {
+    ctx.globalAlpha = 0.65;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.arc(px, py, isBall ? 11 : 20, 0, Math.PI*2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function render() {
+  drawPitch();
+  const smooth = smoothChk.checked;
+
+  for (const [id, arr] of playerTracks.entries()) {
+    const r = rowAtTime(arr, currentT, smooth);
+    if (!r) continue;
+    drawTrail(arr, currentT, colorForTeam(r.team || r.team_hint));
+  }
+  if (ballChk.checked) {
+    for (const [id, arr] of ballTracks.entries()) drawTrail(arr, currentT, '#eee');
+  }
+
+  for (const [id, arr] of playerTracks.entries()) {
+    const r = rowAtTime(arr, currentT, smooth);
+    if (!r) continue;
+    drawMarker(r, id, false);
+  }
+  if (ballChk.checked) {
+    for (const [id, arr] of ballTracks.entries()) {
+      const r = rowAtTime(arr, currentT, smooth);
+      if (!r) continue;
+      drawMarker(r, id, true);
+    }
+  }
+  slider.value = currentT;
+  updateStats();
+}
+
+function tick(ts) {
+  if (lastRAF === null) lastRAF = ts;
+  const dt = (ts - lastRAF) / 1000.0;
+  lastRAF = ts;
+  if (playing) {
+    currentT += dt * Number(speedSel.value || 1);
+    if (currentT > maxT) currentT = minT;
+    render();
+    requestAnimationFrame(tick);
+  }
+}
+
+playBtn.addEventListener('click', () => {
+  playing = !playing;
+  playBtn.textContent = playing ? 'Pause' : 'Play';
+  lastRAF = null;
+  if (playing) requestAnimationFrame(tick);
+});
+slider.addEventListener('input', () => { currentT = Number(slider.value); render(); });
+interpChk.addEventListener('change', chooseActiveRows);
+smoothChk.addEventListener('change', render);
+idsChk.addEventListener('change', render);
+trailChk.addEventListener('change', render);
+ballChk.addEventListener('change', render);
+confChk.addEventListener('change', render);
+followSel.addEventListener('change', render);
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "expected_players": 14,
+  "sample_sec": 0.1,
+  "model": "models/base/yolo26m.pt",
+  "conf": 0.12,
+  "field_mapper": "poly2",
+  "use_sahi": true,
+  "frame_extract_every_sec": 2.0,
+  "hard_frame_top_k": 200,
+  "train_split": 0.7,
+  "val_split": 0.2,
+  "test_split": 0.1
+}

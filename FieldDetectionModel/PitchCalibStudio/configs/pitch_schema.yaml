@@ -1,0 +1,82 @@
+# Rocktail keypoints-86lcy veri setinin 0..21 indeks düzeni ortak hedef
+# şema olarak kullanılır. 0..21 aralığı toplam 22 keypoint demektir.
+#
+# Koordinatlar Rocktail etiketlerinin çoklu kare geometrisinden doğrulandı.
+# Dört dış köşe birim dikdörtgene sabitlenerek yapılan bağımsız kontrolde
+# medyan izdüşüm hatası yaklaşık 2 px'tir.
+schema_name: rocktail_futsal_pitch_22
+status: verified_from_dataset_previews
+canonical_source: keypoints.v1i.yolov8
+coordinate_system:
+  description: Normalized futsal field coordinates
+  x: 0.0 left goal line, 1.0 right goal line
+  y: 0.0 top sideline, 1.0 bottom sideline
+pitch_length_m: 40.0
+pitch_width_m: 20.0
+keypoints:
+  0:
+    name: left_top_corner
+    field_xy: [0.0, 0.0]
+  1:
+    name: left_penalty_area_goal_line_top
+    field_xy: [0.0, 0.25]
+  2:
+    name: left_goal_post_top
+    field_xy: [0.0, 0.425]
+  3:
+    name: left_goal_post_bottom
+    field_xy: [0.0, 0.575]
+  4:
+    name: left_penalty_area_goal_line_bottom
+    field_xy: [0.0, 0.75]
+  5:
+    name: left_bottom_corner
+    field_xy: [0.0, 1.0]
+  6:
+    name: left_penalty_area_front_top
+    field_xy: [0.2, 0.25]
+  7:
+    name: left_penalty_area_front_bottom
+    field_xy: [0.2, 0.75]
+  8:
+    name: halfway_top_sideline
+    field_xy: [0.5, 0.0]
+  9:
+    name: center_circle_halfway_top
+    field_xy: [0.5, 0.35]
+  10:
+    name: center_circle_left
+    field_xy: [0.425, 0.5]
+  11:
+    name: center_circle_right
+    field_xy: [0.575, 0.5]
+  12:
+    name: center_circle_halfway_bottom
+    field_xy: [0.5, 0.65]
+  13:
+    name: halfway_bottom_sideline
+    field_xy: [0.5, 1.0]
+  14:
+    name: right_top_corner
+    field_xy: [1.0, 0.0]
+  15:
+    name: right_penalty_area_goal_line_top
+    field_xy: [1.0, 0.25]
+  16:
+    name: right_goal_post_top
+    field_xy: [1.0, 0.425]
+  17:
+    name: right_goal_post_bottom
+    field_xy: [1.0, 0.575]
+  18:
+    name: right_penalty_area_goal_line_bottom
+    field_xy: [1.0, 0.75]
+  19:
+    name: right_bottom_corner
+    field_xy: [1.0, 1.0]
+  20:
+    name: right_penalty_area_front_top
+    field_xy: [0.8, 0.25]
+  21:
+    name: right_penalty_area_front_bottom
+    field_xy: [0.8, 0.75]

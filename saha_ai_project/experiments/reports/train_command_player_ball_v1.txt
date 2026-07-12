@@ -1,0 +1,1 @@
+yolo detect train model=models/base/yolo26m.pt data=datasets/dataset_v1/data.yaml imgsz=1024 epochs=60 batch=2 nbs=8 mosaic=0.0 mixup=0.0 scale=0.2 device=0 project=D:\Dev\Github\sosyaltactics\saha_ai_project\models\trained name=player_ball_v1

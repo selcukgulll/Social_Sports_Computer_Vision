@@ -1,0 +1,1 @@
+"""PitchCalibStudio command-line tools."""

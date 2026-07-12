@@ -1,0 +1,335 @@
+{
+  "mode": "curve_aware_drag_lines_v12",
+  "mapping_type": "homography",
+  "calibration_time_sec": 5.0,
+  "pitch_length": 100.0,
+  "pitch_width": 60.0,
+  "coordinate_convention": "x=0 sol kale cizgisi, x=L sag kale cizgisi, y=0 ust tac cizgisi, y=W alt tac cizgisi",
+  "penalty_depth": 16.0,
+  "penalty_width": 36.0,
+  "goalbox_depth": 6.0,
+  "goalbox_width": 18.0,
+  "image_to_field_H": [
+    [
+      0.3944150613488587,
+      1.3877567668133906,
+      -213.65610676737901
+    ],
+    [
+      -0.18989896920537552,
+      0.8974987033792485,
+      45.23890735617336
+    ],
+    [
+      0.001651582662595889,
+      0.01265270772864228,
+      0.9999999999999999
+    ]
+  ],
+  "image_to_field_poly": {
+    "type": "poly2",
+    "degree": 2,
+    "image_w": 1280,
+    "image_h": 720,
+    "coef_x": [
+      62.18421807643711,
+      47.61047006665775,
+      24.60921461267515,
+      -1.5128072088658309,
+      0.20229500314045268,
+      -5.0916826271562385
+    ],
+    "coef_y": [
+      23.059384302627826,
+      -30.1704656975126,
+      22.27219461880333,
+      -1.427296788621487,
+      18.712239527977303,
+      -4.013431427110202
+    ],
+    "fit_rmse": 13.434675663181471,
+    "fit_max_err": 40.46782896326745,
+    "num_points": 81,
+    "bad_calibration": true,
+    "quality_gate_rmse": 6.0,
+    "quality_gate_max_err": 18.0
+  },
+  "ui_items": {
+    "sol_tac": {
+      "label": "SOL KALE CIZGISI / SOL KISA KENAR",
+      "type": "curve",
+      "color": [
+        0,
+        255,
+        255
+      ],
+      "p1": [
+        408.0,
+        38.0
+      ],
+      "pm": [
+        199.0,
+        77.0
+      ],
+      "p2": [
+        28.0,
+        146.0
+      ]
+    },
+    "sag_tac": {
+      "label": "SAG KALE CIZGISI / SAG KISA KENAR",
+      "type": "curve",
+      "color": [
+        0,
+        200,
+        255
+      ],
+      "p1": [
+        1249.0,
+        223.0
+      ],
+      "pm": [
+        1158.0,
+        483.0
+      ],
+      "p2": [
+        984.0,
+        719.0
+      ]
+    },
+    "yukari_korner": {
+      "label": "UST TAC CIZGISI / UST UZUN KENAR",
+      "type": "curve",
+      "color": [
+        255,
+        200,
+        0
+      ],
+      "p1": [
+        432.0,
+        41.0
+      ],
+      "pm": [
+        795.0,
+        63.0
+      ],
+      "p2": [
+        1226.0,
+        209.0
+      ]
+    },
+    "asagi_korner": {
+      "label": "ALT TAC CIZGISI / ALT UZUN KENAR",
+      "type": "curve",
+      "color": [
+        255,
+        160,
+        0
+      ],
+      "p1": [
+        37.0,
+        184.0
+      ],
+      "pm": [
+        147.0,
+        526.0
+      ],
+      "p2": [
+        284.0,
+        700.0
+      ]
+    },
+    "orta_cizgi": {
+      "label": "ORTA CIZGI",
+      "type": "line",
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "p1": [
+        677.0,
+        67.0
+      ],
+      "p2": [
+        61.0,
+        235.0
+      ]
+    },
+    "sol_ceza": {
+      "label": "SOL CEZA SAHASI ON CIZGISI",
+      "type": "line",
+      "color": [
+        180,
+        255,
+        180
+      ],
+      "p1": [
+        381.0,
+        60.0
+      ],
+      "p2": [
+        127.0,
+        130.0
+      ]
+    },
+    "sag_ceza": {
+      "label": "SAG CEZA SAHASI ON CIZGISI",
+      "type": "line",
+      "color": [
+        140,
+        255,
+        140
+      ],
+      "p1": [
+        992.0,
+        178.0
+      ],
+      "p2": [
+        554.0,
+        371.0
+      ]
+    },
+    "sol_kale_agzi": {
+      "label": "SOL KALE / KALE AGZI",
+      "type": "line",
+      "color": [
+        0,
+        255,
+        0
+      ],
+      "p1": [
+        260.0,
+        70.0
+      ],
+      "p2": [
+        187.0,
+        89.0
+      ]
+    },
+    "sag_kale_agzi": {
+      "label": "SAG KALE / KALE AGZI",
+      "type": "line",
+      "color": [
+        0,
+        220,
+        0
+      ],
+      "p1": [
+        1211.0,
+        323.0
+      ],
+      "p2": [
+        1163.0,
+        419.0
+      ]
+    },
+    "top": {
+      "label": "Top",
+      "type": "point",
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "p": [
+        978.0,
+        367.0
+      ]
+    }
+  },
+  "goal_guides": {
+    "sol_kale_agzi": {
+      "p1": [
+        260.0,
+        70.0
+      ],
+      "p2": [
+        187.0,
+        89.0
+      ]
+    },
+    "sag_kale_agzi": {
+      "p1": [
+        1211.0,
+        323.0
+      ],
+      "p2": [
+        1163.0,
+        419.0
+      ]
+    }
+  },
+  "inferred_roles": {
+    "left_short_edge": "sol_tac",
+    "right_short_edge": "sag_tac",
+    "top_long_edge": "yukari_korner",
+    "bottom_long_edge": "asagi_korner",
+    "poly_bad_calibration": true
+  },
+  "ball_marker": [
+    978.0,
+    367.0
+  ],
+  "intersection_points_used": [
+    {
+      "image_point": [
+        412.1914006096583,
+        36.80875982672871
+      ],
+      "field_point": [
+        0.0,
+        0.0
+      ],
+      "from_lines": [
+        "sol_tac+yukari_korner"
+      ]
+    },
+    {
+      "image_point": [
+        1253.3841822860584,
+        214.79413428722646
+      ],
+      "field_point": [
+        100.0,
+        0.0
+      ],
+      "from_lines": [
+        "sag_tac+yukari_korner"
+      ]
+    },
+    {
+      "image_point": [
+        619.588712912533,
+        1401.0679184731457
+      ],
+      "field_point": [
+        100.0,
+        60.0
+      ],
+      "from_lines": [
+        "sag_tac+asagi_korner"
+      ]
+    },
+    {
+      "image_point": [
+        19.910610713067214,
+        148.29908958681247
+      ],
+      "field_point": [
+        0.0,
+        60.0
+      ],
+      "from_lines": [
+        "sol_tac+asagi_korner"
+      ]
+    }
+  ],
+  "lens_correction": {
+    "undistort_k1": 0.0,
+    "undistort_k2": 0.0,
+    "undistort_k3": 0.0,
+    "undistort_focal": 0.0
+  },
+  "created_at_unix": 1782938864.7643538
+}

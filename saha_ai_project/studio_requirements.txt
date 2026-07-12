@@ -1,0 +1,5 @@
+-r app/requirements_saha_tracking.txt
+requests>=2.31.0
+playwright>=1.45.0
+imageio-ffmpeg>=0.5.1
+Pillow>=10.0.0
