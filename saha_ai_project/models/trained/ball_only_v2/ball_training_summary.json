@@ -1,0 +1,11 @@
+{
+  "dataset": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\datasets\\BallOnly\\master_v1\\data.yaml",
+  "base_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\base\\yolo26m.pt",
+  "save_dir": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_v2",
+  "best_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_v2\\weights\\best.pt",
+  "last_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_v2\\weights\\last.pt",
+  "epochs": 80,
+  "imgsz": 1024,
+  "batch": 2,
+  "device": "0"
+}

@@ -1,0 +1,13 @@
+{
+  "dataset": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\datasets\\BallOnly\\ball_detect_new_v1\\data.yaml",
+  "base_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_v2\\weights\\best.pt",
+  "save_dir": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_newdata_v4",
+  "best_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_newdata_v4\\weights\\best.pt",
+  "last_model": "D:\\Dev\\Github\\sosyaltactics\\saha_ai_project\\models\\trained\\ball_only_newdata_v4\\weights\\last.pt",
+  "epochs": 200,
+  "imgsz": 1024,
+  "batch": 2,
+  "device": "0",
+  "workers": 4,
+  "cpu_threads": 8
+}
